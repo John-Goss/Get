@@ -3,91 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: thmontig <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2014/12/22 18:41:12 by thmontig          #+#    #+#             */
-/*   Updated: 2014/12/22 18:57:52 by thmontig         ###   ########.fr       */
+/*   Created: 2016/01/07 14:48:02 by jle-quer          #+#    #+#             */
+/*   Updated: 2016/01/07 18:23:59 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		len(t_list *lst, unsigned int local)
+int	get_read_line(char *buff_tmp)
 {
-	char			*localcontent;
-	unsigned int	ret;
+	int	i;
 
-	ret = 0;
-	localcontent = (char *)lst->content + local;
-	while (*localcontent != '\n')
+	i = 0;
+	while (buff_tmp[i] && buff_tmp[i] != '\n')
 	{
-		ret++;
-		localcontent++;
-		if (++local == lst->content_size)
-		{
-			lst = lst->next;
-			if (!lst)
-				break ;
-			localcontent = (char *)(lst->content);
-			local = 0;
-		}
-	}
-	return (ret);
-}
-
-int		readline(t_list **lst, unsigned int *pos, char *str)
-{
-	char			*localcontent;
-
-	localcontent = (char *)(*lst)->content + *pos;
-	while (*localcontent != '\n')
-	{
-		*str++ = *localcontent++;
-		if (++(*pos) == (*lst)->content_size)
-		{
-			*lst = (*lst)->next;
-			if ((*localcontent != '\n' && !(*lst)))
-				return (1);
-			if (!(*lst))
-				return (0);
-			localcontent = (char *)((*lst)->content);
-			*pos = 0;
-		}
-	}
-	*str = 0;
-	if (++(*pos) == (*lst)->content_size)
-	{
-		*lst = (*lst)->next;
-		*pos = 0;
+		if (buff_tmp[i] == '\n')
+			return(0);
+		i++;
 	}
 	return (1);
 }
 
-int		get_next_line(const int fd, char **line)
+int	get_next_line(int const fd, char **line)
 {
-	static t_list		*lst = NULL;
-	static unsigned int	pos = 0;
-	static int			end = 0;
-	int					ret;
-	char				buff[BUFF_SIZE];
+	static char		*buff = NULL;
+	char			buff_tmp[BUFF_SIZE + 1];
+	int				i;
+	int				ret;
 
-	if (!line || BUFF_SIZE <= 0 || fd < 0)
-		return (-1);
-	if (!lst && !end)
+	while (ret > 0 && fd)
 	{
-		end = 1;
-		while ((ret = read(fd, buff, BUFF_SIZE)))
-		{
-			if (ret == -1)
-				return (-1);
-			smartpushback(&lst, ft_lstnew((void *)buff, ret));
-		}
+		ret = read(fd, buff_tmp, BUFF_SIZE);
+		buff_tmp[BUFF_SIZE] = '\0';
+		if (!(get_read_line(buff_tmp))
+			return (0);
 	}
-	if (!lst && end)
-	{
-		lstsimpledel(&lst);
-		return (0);
-	}
-	*line = (char *)malloc(sizeof(char) * (len(lst, pos) + 1));
-	return (readline(&lst, &pos, *line));
+	return (0);
 }
