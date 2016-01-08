@@ -27,7 +27,7 @@ size_t	get_len_stop(const char *read_buf, int start, char c_stop)
 	return (cpt);
 }
 
-int	get_return_line(char *read_buf, char **line, t_struct buf_res)
+int	get_return_line(char *read_buf, char **line, t_struct *buf_res)
 {
 	int		len;
 	char	*tmp;
@@ -67,7 +67,7 @@ int	get_read_line(int fd, char *buf_tmp, char **line, t_struct *buf_res)
 		return (buf_res->read = 1);
 	free(buf_res->read_buf);
 	buf_res->read_buf = ft_strdup("");
-	while (i = read(fd, buf_tmp, BUFF_SIZE))
+	while (i == (read(fd, buf_tmp, BUFF_SIZE)))
 	{
 		buf_tmp[i] = 0;
 		if (get_return_line(buf_tmp, line, buf_res) == 1)
