@@ -6,7 +6,7 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/07 18:24:44 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/07 18:28:05 by jle-quer         ###   ########.fr       */
+/*   Updated: 2016/01/11 18:19:08 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,16 @@
 
 typedef struct		s_struct
 {
-	int				read;
-	char			*read_buf;
+	int				fd;
+	char			buf[BUFF_SIZE + 1];
+	char			*save_buf;
+	struct s_struct	*next;
 }					t_struct;
 
-int	get_next_line(int const fd, char **line);
-int	get_read_line(int fd, char *buf_tmp, char **line, t_struct *buf_res);
-int	get_return_line(char *read_buf, char **line, t_struct *buf_res);
-size_t	get_len_stop(const char *read_buf, int start, char c_stop);
+int			get_next_line(int const fd, char **line);
+int			get_read_line(int const fd, char **line, t_struct *struc);
+int			get_return_line(char **line, t_struct *struc);
+void		get_create_line(int const fd, t_struct *struc);
+t_struct	*get_new_struct(int const fd, t_struct *next);
 
 #endif

@@ -5,106 +5,118 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/01/07 14:48:02 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/07 18:23:59 by jle-quer         ###   ########.fr       */
+/*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
+/*   Updated: 2016/01/11 18:19:00 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	get_len_stop(const char *read_buf, int start, char c_stop)
+void	get_create_line(int const fd, t_struct *struc)
 {
-	size_t	cpt;
-
-	if (!read_buf)
-		return (0);
-	cpt = 0;
-	while (read_buf[start] && read_buf[start] != c_stop)
+	t_struct *new;
+	new = struc;
+	if (struc == NULL)
+		struc = get_new_struct(fd, NULL);
+	while (new->next != struc && new->fd != fd)
+		new = new->next;
+	if (new->fd != fd)
 	{
-		start++;
-		cpt++;
+		new->next = get_new_struct(fd, new->next);
+		struc = new->next;
+		return ;
 	}
-	return (cpt);
+	struc = new;
+	return ;
 }
 
-int	get_return_line(char *read_buf, char **line, t_struct *buf_res)
+t_struct	*get_new_struct(int const fd, t_struct *next)
 {
-	int		len;
-	char	*tmp;
-	char	*line_tmp;
-
-	len = 0;
-	if (ft_strchr(read_buf, '\n') == 0)
-	{
-		line_tmp = *line;
-		*line = ft_strjoin(line_tmp, read_buf);
-		free(line_tmp);
-	}
+	t_struct	*new;
+	if (!(new = (t_struct*)malloc(sizeof(t_struct))))
+		return (NULL);
+	if (next == NULL)
+		new->next = new;
 	else
+		new->next = next;
+	new->fd = fd;
+	new->save_buf = NULL;
+	return (new);
+}
+
+int	get_return_line(char **line, t_struct *struc)
+{
+	int		i;
+	char	*tmp;
+
+	i = 0;
+	tmp = NULL;
+
+	i = ft_strchr_index(struc->buf, '\n');
+	if (i >= 0 && (!(struc->save_buf)))
 	{
-		len = get_len_stop(read_buf, 0, '\n');
-		tmp = ft_strsub(read_buf, 0, len);
-		line_tmp = *line;
-		*line = ft_strjoin(line_tmp, tmp);
-		free(line_tmp);
-		free(tmp);
-		tmp = ft_strsub(read_buf, len + 1, (ft_strlen(read_buf) - len));
-		free(buf_res->read_buf);
-		buf_res->read_buf = tmp;
+		*line = ft_strsub(struc->buf, 0, i);
+		struc->save_buf = ft_strdup(struc->buf + i + 1);
+		return (1);
+	}
+	else if (i >= 0 && struc->save_buf)
+	{
+		tmp = ft_strjoin(struc->save_buf, ft_strsub(struc->buf, 0, i));
+		*line = tmp;
+		free(struc->save_buf);
+		struc->save_buf = ft_strdup(struc->buf + i + 1);
 		return (1);
 	}
 	return (0);
 }
 
-int	get_read_line(int fd, char *buf_tmp, char **line, t_struct *buf_res)
+int	get_read_line(int const fd, char **line, t_struct *struc)
 {
-	int	i;
+	char	*tmp;
+	int		ret;
 
-	i = 0;
-	if (!(buf_res->read_buf))
-		buf_res->read_buf = ft_strdup("");
-	if (get_return_line(buf_res->read_buf, line, buf_res) == 1)
-		return (buf_res->read = 1);
-	free(buf_res->read_buf);
-	buf_res->read_buf = ft_strdup("");
-	while (i == (read(fd, buf_tmp, BUFF_SIZE)))
+	ret = 0;
+	tmp = NULL;
+	while (ret == read(fd, struc->buf, BUFF_SIZE) > 0)
 	{
-		buf_tmp[i] = 0;
-		if (get_return_line(buf_tmp, line, buf_res) == 1)
+		if (get_return_line(line, struc) == 1)
 			return (1);
-		buf_res->read = 1;
+		else
+		{
+			tmp = ft_strjoin(struc->buf, struc->save_buf);
+			free(struc->save_buf);
+			struc->save_buf = tmp;
+		}
+			return (0);
 	}
-	if (i == -1)
+	if (ret < 0)
 		return (-1);
-	if (buf_res->read == 1)
-	{
-		buf_res->read = 0;
-		if (ft_strcmp("", *line) != 0)
-			return (1);
-	}
 	return (0);
 }
 
 int	get_next_line(int const fd, char **line)
 {
-	static t_struct	*buf_res;
-	char			*buf_tmp;
-	int				res;
+	static t_struct	*struc = NULL;
+	int				i;
 
-	if (!line)
+	i = 0;
+	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
-	if ((buf_res = (t_struct*)malloc(sizeof(t_struct))) == NULL)
-		return (-1);
-	if (!(buf_tmp = (char *)malloc(sizeof(char) * (BUFF_SIZE + 1))))
-		return (-1);
-	buf_tmp[0] = 0;
-	*line = ft_strdup("");
-	res = get_read_line(fd, buf_tmp, line, buf_res);
-	if ((res == 0) || (res == -1))
+	get_create_line(fd, struc);
+	if (ft_strchr_index(struc->save_buf, '\n') >= 0)
 	{
-		free(buf_res->read_buf);
-		free(buf_res);
+		*line = ft_strsub(struc->save_buf, 0, i);
+		ft_strcpy(struc->buf, struc->save_buf + i + 1);
+		free(struc->save_buf);
+		struc->save_buf = ft_strdup(struc->buf);
+		return (1);
 	}
-	free(buf_tmp);
-	return (res);
+	ft_bzero(struc->buf, BUFF_SIZE + 1);
+	if (get_read_line(fd, line, struc) == 1)
+		return (1);
+	if (get_read_line(fd, line, struc) == 0)
+		return (0);
+	if (get_read_line(fd, line, struc) == -1)
+		return (-1);
+	return (0);
 }
