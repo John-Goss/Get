@@ -6,7 +6,7 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/11 18:19:00 by jle-quer         ###   ########.fr       */
+/*   Updated: 2016/01/11 19:04:14 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,11 +112,5 @@ int	get_next_line(int const fd, char **line)
 		return (1);
 	}
 	ft_bzero(struc->buf, BUFF_SIZE + 1);
-	if (get_read_line(fd, line, struc) == 1)
-		return (1);
-	if (get_read_line(fd, line, struc) == 0)
-		return (0);
-	if (get_read_line(fd, line, struc) == -1)
-		return (-1);
-	return (0);
+	return (get_read_line(fd, line, struc));
 }
