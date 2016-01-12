@@ -6,7 +6,7 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 12:46:15 by jle-quer         ###   ########.fr       */
+/*   Updated: 2016/01/12 12:48:02 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int			get_next_line(int const fd, char **line)
 	int				i;
 
 	i = 0;
-	if (/*!line ||*/fd < 0 || BUFF_SIZE < 0)
+	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
 	get_create_line(fd, struc);
 	if ((i = ft_strchr_index(struc->save_buf, '\n')) >= 0)
