@@ -6,7 +6,7 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/07 18:24:44 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 15:06:11 by mimazouz         ###   ########.fr       */
+/*   Updated: 2016/01/12 16:24:05 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct		s_struct
 }					t_struct;
 
 int					get_next_line(int const fd, char **line);
-int					get_read_line(int const fd, char **line, t_struct *struc);
+int					get_read_line(char **line, t_struct **struc);
 int					get_return_line(char **line, t_struct *struc);
 void				get_create_line(int const fd, t_struct **struc);
 t_struct			*get_new_struct(int const fd, t_struct *next);

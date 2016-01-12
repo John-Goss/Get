@@ -6,11 +6,10 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 15:16:54 by mimazouz         ###   ########.fr       */
+/*   Updated: 2016/01/12 17:01:38 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "get_next_line.h"
 
 void		get_create_line(int const fd, t_struct **struc)
@@ -62,7 +61,7 @@ int			get_return_line(char **line, t_struct *struc)
 	{
 		*line = ft_strsub(struc->buf, 0, i);
 		struc->save_buf = ft_strdup(struc->buf + (i + 1));
-		return (0);
+		return (1);
 	}
 	else if (i >= 0 && struc->save_buf)
 	{
@@ -70,30 +69,37 @@ int			get_return_line(char **line, t_struct *struc)
 		*line = tmp;
 		free(struc->save_buf);
 		struc->save_buf = ft_strdup(struc->buf + i + 1);
-		return (0);
+		return (1);
 	}
-	return (1);
+	return (0);
 }
 
-int			get_read_line(int const fd, char **line, t_struct **struc)
+int			get_read_line(char **line, t_struct **struc)
 {
 	char	*tmp;
 	int		ret;
 
 	ret = 0;
 	tmp = NULL;
-	printf("%s\n", "In Fct get_read_line");
 	ft_bzero((*struc)->buf, BUFF_SIZE + 1);
-	while (ret == read(fd, (*struc)->buf, BUFF_SIZE) > 0)
+	while ((ret = read((*struc)->fd, (*struc)->buf, BUFF_SIZE)) > 0)
 	{
-		if (get_return_line(*line, struc) == 0)
+		if (get_return_line(line, *struc) == 1)
 			return (1);
 		else
 		{
-			tmp = ft_strjoin(struc->save_buf, struc->buf);
-			free(struc->save_buf);
-			struc->save_buf = tmp;
+			tmp = ft_strjoin((*struc)->save_buf, (*struc)->buf);
+			free((*struc)->save_buf);
+			(*struc)->save_buf = tmp;
+			ft_putstr((*struc)->save_buf);
 		}
+	}
+	if (ret == 0 && (*struc)->save_buf != NULL)
+	{
+		ft_putendl("last line et de zizi");
+		*line = (*struc)->save_buf;
+		free((*struc)->save_buf);
+		return (1);
 	}
 	if (ret < 0)
 		return (-1);
@@ -108,18 +114,14 @@ int			get_next_line(int const fd, char **line)
 	i = 0;
 	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
-	printf("%s\n", "Enter Fct");
 	get_create_line(fd, &struc);
-	printf("%s\n", "Out Fct get_create_line");
 	if (struc->save_buf != NULL && (i = ft_strchr_index(struc->save_buf, '\n')) >= 0)
 	{
-		printf("%s\n", "Enter 1st condition");
 		*line = ft_strsub(struc->save_buf, 0, i);
 		ft_strcpy(struc->buf, struc->save_buf + i + 1);
 		free(struc->save_buf);
 		struc->save_buf = ft_strdup(struc->buf);
-		return (0);
+		return (1);
 	}
-	printf("%s\n", "Enter Fct get_read_line time");
-	return (get_read_line(fd, line, struc));
+	return (get_read_line(line, &struc));
 }
