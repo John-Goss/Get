@@ -6,7 +6,7 @@
 #    By: vgosset <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/11 16:41:02 by vgosset           #+#    #+#              #
-#    Updated: 2016/01/11 18:52:35 by jle-quer         ###   ########.fr        #
+#    Updated: 2016/01/12 12:18:29 by jle-quer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ SRC =	stest.c \
 
 OBJ = $(SRC:.c=.o)
 
-LIB_DIR = Libft/
+LIB_DIR = libft/
 
 NAME = Get_Next
 
