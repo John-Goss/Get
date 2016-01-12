@@ -6,37 +6,39 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 14:36:58 by jle-quer         ###   ########.fr       */
+/*   Updated: 2016/01/12 15:16:54 by mimazouz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "get_next_line.h"
 
-void		get_create_line(int const fd, t_struct *struc)
+void		get_create_line(int const fd, t_struct **struc)
 {
 	t_struct	*new;
 
-	if (struc == NULL)
-		struc = get_new_struct(fd, NULL);
-	new = struc;
-	while (new->next != struc && new->fd != fd)
+	new = *struc;
+	if (*struc == NULL)
+	{
+		*struc = get_new_struct(fd, NULL);
+		return ;
+	}
+	while (new->next != *struc && new->fd != fd)
 		new = new->next;
 	if (new->fd != fd)
 	{
 		new->next = get_new_struct(fd, new->next);
-		struc = new->next;
+		*struc = new->next;
 		return ;
 	}
-	struc = new;
-	return ;
+	*struc = new;
 }
 
 t_struct	*get_new_struct(int const fd, t_struct *next)
 {
 	t_struct	*new;
 
-	new = (t_struct*)malloc(sizeof(t_struct));
+	new = malloc(sizeof(*new));
 	if (new == NULL)
 		return (NULL);
 	if (next == NULL)
@@ -73,7 +75,7 @@ int			get_return_line(char **line, t_struct *struc)
 	return (1);
 }
 
-int			get_read_line(int const fd, char **line, t_struct *struc)
+int			get_read_line(int const fd, char **line, t_struct **struc)
 {
 	char	*tmp;
 	int		ret;
@@ -81,10 +83,11 @@ int			get_read_line(int const fd, char **line, t_struct *struc)
 	ret = 0;
 	tmp = NULL;
 	printf("%s\n", "In Fct get_read_line");
-	while (ret == read(fd, struc->buf, BUFF_SIZE) > 0)
+	ft_bzero((*struc)->buf, BUFF_SIZE + 1);
+	while (ret == read(fd, (*struc)->buf, BUFF_SIZE) > 0)
 	{
-		if (get_return_line(line, struc) == 0)
-			return (0);
+		if (get_return_line(*line, struc) == 0)
+			return (1);
 		else
 		{
 			tmp = ft_strjoin(struc->save_buf, struc->buf);
@@ -94,7 +97,7 @@ int			get_read_line(int const fd, char **line, t_struct *struc)
 	}
 	if (ret < 0)
 		return (-1);
-	return (1);
+	return (0);
 }
 
 int			get_next_line(int const fd, char **line)
@@ -106,9 +109,9 @@ int			get_next_line(int const fd, char **line)
 	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
 	printf("%s\n", "Enter Fct");
-	get_create_line(fd, struc);
+	get_create_line(fd, &struc);
 	printf("%s\n", "Out Fct get_create_line");
-	if ((i = ft_strchr_index(struc->save_buf, '\n')) >= 0)
+	if (struc->save_buf != NULL && (i = ft_strchr_index(struc->save_buf, '\n')) >= 0)
 	{
 		printf("%s\n", "Enter 1st condition");
 		*line = ft_strsub(struc->save_buf, 0, i);
@@ -117,7 +120,6 @@ int			get_next_line(int const fd, char **line)
 		struc->save_buf = ft_strdup(struc->buf);
 		return (0);
 	}
-	ft_bzero(struc->buf, BUFF_SIZE + 1);
 	printf("%s\n", "Enter Fct get_read_line time");
 	return (get_read_line(fd, line, struc));
 }
