@@ -6,11 +6,11 @@
 #    By: vgosset <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/11 16:41:02 by vgosset           #+#    #+#              #
-#    Updated: 2016/01/12 12:18:29 by jle-quer         ###   ########.fr        #
+#    Updated: 2016/01/12 14:38:14 by jle-quer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRC =	stest.c \
+SRC =	main.c \
 		get_next_line.c
 
 OBJ = $(SRC:.c=.o)

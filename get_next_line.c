@@ -6,7 +6,7 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 12:48:02 by jle-quer         ###   ########.fr       */
+/*   Updated: 2016/01/12 14:36:58 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int			get_read_line(int const fd, char **line, t_struct *struc)
 
 	ret = 0;
 	tmp = NULL;
+	printf("%s\n", "In Fct get_read_line");
 	while (ret == read(fd, struc->buf, BUFF_SIZE) > 0)
 	{
 		if (get_return_line(line, struc) == 0)
@@ -104,9 +105,12 @@ int			get_next_line(int const fd, char **line)
 	i = 0;
 	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
+	printf("%s\n", "Enter Fct");
 	get_create_line(fd, struc);
+	printf("%s\n", "Out Fct get_create_line");
 	if ((i = ft_strchr_index(struc->save_buf, '\n')) >= 0)
 	{
+		printf("%s\n", "Enter 1st condition");
 		*line = ft_strsub(struc->save_buf, 0, i);
 		ft_strcpy(struc->buf, struc->save_buf + i + 1);
 		free(struc->save_buf);
@@ -114,5 +118,6 @@ int			get_next_line(int const fd, char **line)
 		return (0);
 	}
 	ft_bzero(struc->buf, BUFF_SIZE + 1);
+	printf("%s\n", "Enter Fct get_read_line time");
 	return (get_read_line(fd, line, struc));
 }
