@@ -1,43 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_putnbr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/03 13:28:28 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 18:33:06 by jle-quer         ###   ########.fr       */
+/*   Created: 2015/11/27 12:53:41 by jle-quer          #+#    #+#             */
+/*   Updated: 2015/11/30 11:29:30 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+void	ft_putnbr(int n)
 {
-	char	*new;
-	int		i;
-	int		j;
-
-	if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
-	new = ft_strnew((size_t)ft_strlen(s1) + (size_t)ft_strlen(s2) + 1);
-	if (new == NULL)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[i])
+	if (n == -2147483648)
+		ft_putstr("-2147483648");
+	else
 	{
-		new[i] = ((char *)s1)[i];
-		i++;
+		if (n < 0)
+		{
+			n = -n;
+			ft_putchar('-');
+		}
+		if (n >= 10)
+			ft_putnbr(n / 10);
+		ft_putchar(n % 10 + '0');
 	}
-	while (s2[j])
-	{
-		new[i] = ((char *)s2)[j];
-		i++;
-		j++;
-	}
-	new[i] = '\0';
-	return (new);
 }

@@ -1,43 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_strncat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/03 13:28:28 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 18:33:06 by jle-quer         ###   ########.fr       */
+/*   Created: 2015/11/30 16:47:45 by jle-quer          #+#    #+#             */
+/*   Updated: 2015/12/11 11:03:50 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strncat(char *s1, const char *s2, size_t n)
 {
-	char	*new;
+	size_t	cpt;
 	int		i;
 	int		j;
 
-	if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
-	new = ft_strnew((size_t)ft_strlen(s1) + (size_t)ft_strlen(s2) + 1);
-	if (new == NULL)
-		return (NULL);
+	j = ft_strlen(s1);
 	i = 0;
-	j = 0;
-	while (s1[i])
+	cpt = 0;
+	while (s2[i] && cpt < n)
 	{
-		new[i] = ((char *)s1)[i];
-		i++;
-	}
-	while (s2[j])
-	{
-		new[i] = ((char *)s2)[j];
+		s1[j] = ((char *)s2)[i];
 		i++;
 		j++;
+		cpt++;
 	}
-	new[i] = '\0';
-	return (new);
+	s1[j] = '\0';
+	return (s1);
 }

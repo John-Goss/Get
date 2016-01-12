@@ -1,43 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/03 13:28:28 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 18:33:06 by jle-quer         ###   ########.fr       */
+/*   Created: 2015/11/30 15:53:18 by jle-quer          #+#    #+#             */
+/*   Updated: 2015/12/14 15:06:43 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strnstr(const char *s1, const char *s2, size_t len)
 {
-	char	*new;
-	int		i;
-	int		j;
+	size_t	s2_len;
+	size_t	i;
+	char	*ptr;
 
-	if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
-	new = ft_strnew((size_t)ft_strlen(s1) + (size_t)ft_strlen(s2) + 1);
-	if (new == NULL)
+	s2_len = ft_strlen(s2);
+	ptr = (char *)s1;
+	if (ft_strlen(ptr) < s2_len)
 		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[i])
+	if (!s2)
+		return (ptr);
+	if (s2_len > len)
+		return (NULL);
+	i = len - s2_len + 1;
+	while (i > 0)
 	{
-		new[i] = ((char *)s1)[i];
-		i++;
+		if (ft_strncmp(ptr, s2, s2_len) == 0)
+			return (ptr);
+		ptr++;
+		i--;
 	}
-	while (s2[j])
-	{
-		new[i] = ((char *)s2)[j];
-		i++;
-		j++;
-	}
-	new[i] = '\0';
-	return (new);
+	return (NULL);
 }

@@ -1,43 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/03 13:28:28 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 18:33:06 by jle-quer         ###   ########.fr       */
+/*   Created: 2015/12/07 11:46:02 by jle-quer          #+#    #+#             */
+/*   Updated: 2015/12/07 15:57:38 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+t_list	*ft_lstnew(void const *content, size_t content_size)
 {
-	char	*new;
-	int		i;
-	int		j;
+	t_list *new;
 
-	if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
-	new = ft_strnew((size_t)ft_strlen(s1) + (size_t)ft_strlen(s2) + 1);
-	if (new == NULL)
+	new = (t_list *)malloc(sizeof(t_list));
+	if (!new)
 		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[i])
+	if (content == NULL)
 	{
-		new[i] = ((char *)s1)[i];
-		i++;
+		new->content = NULL;
+		new->content_size = 0;
 	}
-	while (s2[j])
+	else if (content)
 	{
-		new[i] = ((char *)s2)[j];
-		i++;
-		j++;
+		new->content = (void *)malloc(sizeof(content_size));
+		if (!new->content)
+			return (NULL);
+		new->content = ft_memcpy(new->content, content, content_size);
+		new->content_size = content_size;
 	}
-	new[i] = '\0';
+	new->next = NULL;
 	return (new);
 }

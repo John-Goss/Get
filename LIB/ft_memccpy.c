@@ -1,43 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_memccpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/03 13:28:28 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 18:33:06 by jle-quer         ###   ########.fr       */
+/*   Created: 2015/11/25 14:07:59 by jle-quer          #+#    #+#             */
+/*   Updated: 2015/12/11 11:18:16 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+void	*ft_memccpy(void *dst, const void *src, int c, size_t n)
 {
-	char	*new;
-	int		i;
-	int		j;
+	size_t			cpt;
+	unsigned char	*ptr_dst;
+	unsigned char	*ptr_src;
 
-	if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
-	new = ft_strnew((size_t)ft_strlen(s1) + (size_t)ft_strlen(s2) + 1);
-	if (new == NULL)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[i])
+	ptr_dst = (unsigned char *)dst;
+	ptr_src = (unsigned char *)src;
+	cpt = 0;
+	while (cpt < n)
 	{
-		new[i] = ((char *)s1)[i];
-		i++;
+		ptr_dst[cpt] = ptr_src[cpt];
+		if (ptr_src[cpt] == (unsigned char)c)
+			return (&ptr_dst[cpt + 1]);
+		cpt++;
 	}
-	while (s2[j])
-	{
-		new[i] = ((char *)s2)[j];
-		i++;
-		j++;
-	}
-	new[i] = '\0';
-	return (new);
+	return (NULL);
 }

@@ -1,43 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/03 13:28:28 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 18:33:06 by jle-quer         ###   ########.fr       */
+/*   Created: 2015/12/04 12:19:02 by jle-quer          #+#    #+#             */
+/*   Updated: 2015/12/14 14:57:35 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+int	ft_atoi(const char *str)
 {
-	char	*new;
-	int		i;
-	int		j;
+	int	i;
+	int	res;
+	int	is_neg;
 
-	if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
-	new = ft_strnew((size_t)ft_strlen(s1) + (size_t)ft_strlen(s2) + 1);
-	if (new == NULL)
-		return (NULL);
+	res = 0;
 	i = 0;
-	j = 0;
-	while (s1[i])
-	{
-		new[i] = ((char *)s1)[i];
+	is_neg = 0;
+	while (ft_isspace(str[i]))
 		i++;
-	}
-	while (s2[j])
+	if (str[i] == '+' || str[i] == '-')
 	{
-		new[i] = ((char *)s2)[j];
+		if (str[i] == '-')
+			is_neg = 1;
 		i++;
-		j++;
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
 	}
-	new[i] = '\0';
-	return (new);
+	while (str[i] >= '0' && str[i] <= '9')
+		res = res * 10 + str[i++] - '0';
+	if (is_neg == 1)
+		res = -res;
+	return (res);
 }

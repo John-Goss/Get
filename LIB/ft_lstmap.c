@@ -1,43 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/03 13:28:28 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 18:33:06 by jle-quer         ###   ########.fr       */
+/*   Created: 2015/12/07 13:00:46 by jle-quer          #+#    #+#             */
+/*   Updated: 2015/12/07 16:34:34 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+t_list	*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem))
 {
-	char	*new;
-	int		i;
-	int		j;
+	t_list	*begin;
+	t_list	*new;
 
-	if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
-	new = ft_strnew((size_t)ft_strlen(s1) + (size_t)ft_strlen(s2) + 1);
-	if (new == NULL)
+	begin = NULL;
+	if (!lst || !f)
 		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[i])
+	while (lst)
 	{
-		new[i] = ((char *)s1)[i];
-		i++;
+		if (!begin)
+		{
+			begin = (f)(lst);
+			lst = lst->next;
+			new = begin;
+		}
+		else
+		{
+			new->next = (f)(lst);
+			new = new->next;
+			lst = lst->next;
+		}
 	}
-	while (s2[j])
-	{
-		new[i] = ((char *)s2)[j];
-		i++;
-		j++;
-	}
-	new[i] = '\0';
-	return (new);
+	return (begin);
 }

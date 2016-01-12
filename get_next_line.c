@@ -6,7 +6,7 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 17:01:38 by jle-quer         ###   ########.fr       */
+/*   Updated: 2016/01/12 18:35:09 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void		get_create_line(int const fd, t_struct **struc)
 		return ;
 	}
 	*struc = new;
+	ft_bzero((*struc)->buf, BUFF_SIZE + 1);
 }
 
 t_struct	*get_new_struct(int const fd, t_struct *next)
@@ -60,7 +61,10 @@ int			get_return_line(char **line, t_struct *struc)
 	if (i >= 0 && (!(struc->save_buf)))
 	{
 		*line = ft_strsub(struc->buf, 0, i);
-		struc->save_buf = ft_strdup(struc->buf + (i + 1));
+		if (struc->buf[i + 1])
+			struc->save_buf = ft_strdup(struc->buf + i + 1);
+		else
+			struc->save_buf = NULL;
 		return (1);
 	}
 	else if (i >= 0 && struc->save_buf)
@@ -68,7 +72,10 @@ int			get_return_line(char **line, t_struct *struc)
 		tmp = ft_strjoin(struc->save_buf, ft_strsub(struc->buf, 0, i));
 		*line = tmp;
 		free(struc->save_buf);
-		struc->save_buf = ft_strdup(struc->buf + i + 1);
+		if (struc->buf[i + 1])
+			struc->save_buf = ft_strdup(struc->buf + i + 1);
+		else
+			struc->save_buf = NULL;
 		return (1);
 	}
 	return (0);
@@ -91,14 +98,12 @@ int			get_read_line(char **line, t_struct **struc)
 			tmp = ft_strjoin((*struc)->save_buf, (*struc)->buf);
 			free((*struc)->save_buf);
 			(*struc)->save_buf = tmp;
-			ft_putstr((*struc)->save_buf);
 		}
 	}
-	if (ret == 0 && (*struc)->save_buf != NULL)
+	if ((*struc)->save_buf != NULL && ret == 0)
 	{
-		ft_putendl("last line et de zizi");
 		*line = (*struc)->save_buf;
-		free((*struc)->save_buf);
+		(*struc)->save_buf = NULL;
 		return (1);
 	}
 	if (ret < 0)
@@ -120,7 +125,10 @@ int			get_next_line(int const fd, char **line)
 		*line = ft_strsub(struc->save_buf, 0, i);
 		ft_strcpy(struc->buf, struc->save_buf + i + 1);
 		free(struc->save_buf);
-		struc->save_buf = ft_strdup(struc->buf);
+		if (struc->buf[0])
+			struc->save_buf = ft_strdup(struc->buf);
+		else
+			struc->save_buf = NULL;
 		return (1);
 	}
 	return (get_read_line(line, &struc));
