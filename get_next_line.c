@@ -6,10 +6,10 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/13 13:17:46 by jle-quer         ###   ########.fr       */
+/*   Updated: 2016/01/13 15:29:47 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <stdio.h>
+
 #include "get_next_line.h"
 
 void		get_create_line(int const fd, t_struct **struc)
@@ -58,30 +58,22 @@ int			get_return_line(char **line, t_struct *struc)
 
 	i = 0;
 	tmp = NULL;
-	i = ft_strchr_index(struc->buf, '\n');
-	if (i >= 0 && (!(struc->save_buf)))
+	if ((i = ft_strchr_index(struc->buf, '\n')) >= 0 && (!(struc->save_buf)))
 	{
 		*line = ft_strsub(struc->buf, 0, i);
-		if (struc->buf[i + 1])
-			struc->save_buf = ft_strdup(struc->buf + i + 1);
-		else
-			struc->save_buf = NULL;
+		struc->save_buf = struc->buf[i + 1] ?
+			ft_strdup(struc->buf + i + 1) : NULL;
 		return (1);
 	}
 	else if (i >= 0 && struc->save_buf)
 	{
-		tmp = ft_strjoin(struc->save_buf, ft_strsub(struc->buf, 0, i));
+		*line = ft_strsub(struc->buf, 0, i);
+		tmp = ft_strjoin(struc->save_buf, *line);
+		free(*line);
 		*line = tmp;
 		free(struc->save_buf);
-		if (struc->buf[i + 1])
-		{
-			struc->save_buf = ft_strdup(struc->buf + i + 1);
-		}
-		else
-		{
-			struc->save_buf = NULL;
-			free(struc->save_buf);
-		}
+		struc->save_buf = struc->buf[i + 1] ?
+			ft_strdup(struc->buf + i + 1) : NULL;
 		return (1);
 	}
 	return (0);
@@ -110,12 +102,9 @@ int			get_read_line(char **line, t_struct **struc)
 	{
 		*line = (*struc)->save_buf;
 		(*struc)->save_buf = NULL;
-//		free((*struc)->save_buf);
 		return (1);
 	}
-	if (ret < 0)
-		return (-1);
-	return (0);
+	return (ret < 0 ? -1 : 0);
 }
 
 int			get_next_line(int const fd, char **line)
@@ -127,7 +116,8 @@ int			get_next_line(int const fd, char **line)
 	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
 	get_create_line(fd, &struc);
-	if (struc->save_buf != NULL && (i = ft_strchr_index(struc->save_buf, '\n')) >= 0)
+	if (struc->save_buf != NULL &&
+			(i = ft_strchr_index(struc->save_buf, '\n')) >= 0)
 	{
 		*line = ft_strsub(struc->save_buf, 0, i);
 		ft_strcpy(struc->buf, struc->save_buf + i + 1);
@@ -137,7 +127,7 @@ int			get_next_line(int const fd, char **line)
 		else
 		{
 			struc->save_buf = NULL;
-//			free(struc->save_buf);
+			free(struc->save_buf);
 		}
 		return (1);
 	}
