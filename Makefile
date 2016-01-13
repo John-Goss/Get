@@ -6,7 +6,7 @@
 #    By: vgosset <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/11 16:41:02 by vgosset           #+#    #+#              #
-#    Updated: 2016/01/12 14:38:14 by jle-quer         ###   ########.fr        #
+#    Updated: 2016/01/13 15:12:54 by jle-quer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ LIB_DIR = libft/
 
 NAME = Get_Next
 
-FLAG = -Wall -Wextra -Werror
+FLAG = -Wall -Wextra -Werror -g
 
 CC = gcc
 
