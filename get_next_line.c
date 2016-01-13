@@ -6,10 +6,10 @@
 /*   By: jle-quer <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 11:33:06 by jle-quer          #+#    #+#             */
-/*   Updated: 2016/01/12 18:35:09 by jle-quer         ###   ########.fr       */
+/*   Updated: 2016/01/13 13:17:46 by jle-quer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
+#include <stdio.h>
 #include "get_next_line.h"
 
 void		get_create_line(int const fd, t_struct **struc)
@@ -46,6 +46,7 @@ t_struct	*get_new_struct(int const fd, t_struct *next)
 	else
 		new->next = next;
 	new->fd = fd;
+	ft_bzero(new->buf, BUFF_SIZE + 1);
 	new->save_buf = NULL;
 	return (new);
 }
@@ -73,9 +74,14 @@ int			get_return_line(char **line, t_struct *struc)
 		*line = tmp;
 		free(struc->save_buf);
 		if (struc->buf[i + 1])
+		{
 			struc->save_buf = ft_strdup(struc->buf + i + 1);
+		}
 		else
+		{
 			struc->save_buf = NULL;
+			free(struc->save_buf);
+		}
 		return (1);
 	}
 	return (0);
@@ -88,7 +94,6 @@ int			get_read_line(char **line, t_struct **struc)
 
 	ret = 0;
 	tmp = NULL;
-	ft_bzero((*struc)->buf, BUFF_SIZE + 1);
 	while ((ret = read((*struc)->fd, (*struc)->buf, BUFF_SIZE)) > 0)
 	{
 		if (get_return_line(line, *struc) == 1)
@@ -99,11 +104,13 @@ int			get_read_line(char **line, t_struct **struc)
 			free((*struc)->save_buf);
 			(*struc)->save_buf = tmp;
 		}
+		ft_bzero((*struc)->buf, BUFF_SIZE);
 	}
 	if ((*struc)->save_buf != NULL && ret == 0)
 	{
 		*line = (*struc)->save_buf;
 		(*struc)->save_buf = NULL;
+//		free((*struc)->save_buf);
 		return (1);
 	}
 	if (ret < 0)
@@ -128,7 +135,10 @@ int			get_next_line(int const fd, char **line)
 		if (struc->buf[0])
 			struc->save_buf = ft_strdup(struc->buf);
 		else
+		{
 			struc->save_buf = NULL;
+//			free(struc->save_buf);
+		}
 		return (1);
 	}
 	return (get_read_line(line, &struc));
